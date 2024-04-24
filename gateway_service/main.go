@@ -8,7 +8,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/go-microservice-grpc/helloworld"
+	"github.com/go-microservice-grpc/proto/hello_service"
 	"google.golang.org/grpc"
 )
 
@@ -18,17 +18,17 @@ func main() {
 		log.Fatalf("did not connect: %v", err)
 	}
 	defer conn.Close()
-	c := helloworld.NewHelloworldServiceClient(conn)
+	c := hello_service.NewHelloServiceClient(conn)
 
 	// Unary RPC
-	response, err := c.SayHello(context.Background(), &helloworld.HelloRequest{Name: "Alice"})
+	response, err := c.SayHello(context.Background(), &hello_service.HelloRequest{Name: "Alice"})
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
 	log.Printf("Greeting: %s", response.Message)
 
 	// Server streaming RPC
-	stream, err := c.SayHelloServerStream(context.Background(), &helloworld.HelloRequest{Name: "Bob"})
+	stream, err := c.SayHelloServerStream(context.Background(), &hello_service.HelloRequest{Name: "Bob"})
 	if err != nil {
 		log.Fatalf("error while calling SayHelloServerStream: %v", err)
 	}
@@ -48,7 +48,7 @@ func main() {
 
 	var names = []string{"Charlie", "Daniel", "Emma", "Fiona", "George"}
 	for _, name := range names {
-		if err := clientStream.Send(&helloworld.HelloRequest{Name: name}); err != nil {
+		if err := clientStream.Send(&hello_service.HelloRequest{Name: name}); err != nil {
 			log.Fatalf("error sending request: %v", err)
 		}
 	}
@@ -81,7 +81,7 @@ func main() {
 	}()
 	for i := 0; i < 5; i++ {
 		time.Sleep(time.Second)
-		if err := bidiStream.Send(&helloworld.HelloRequest{Name: "David " + strconv.Itoa(i)}); err != nil {
+		if err := bidiStream.Send(&hello_service.HelloRequest{Name: "David " + strconv.Itoa(i)}); err != nil {
 			log.Fatalf("error sending request: %v", err)
 		}
 	}

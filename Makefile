@@ -1,11 +1,5 @@
-gen:
-	protoc --go_out=. --go-grpc_out=. proto/*.proto
-gen-pb:
-	protoc --go_out=. proto/*.proto
-gen-grpc-pb:
-	protoc --go-grpc_out=. proto/*.proto
+gen-core-service:
+	protoc --go_out=. --go-grpc_out=. proto/core_service/*.proto
 
-ser:
-	go run ./server/server.go
-cli:
-	go run ./client/client.go
+gen-hello-service:
+	protoc --go_out=. --go-grpc_out=. proto/hello_service/*.proto
