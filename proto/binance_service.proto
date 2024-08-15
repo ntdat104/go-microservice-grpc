@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package go_microservice_grpc;
+
+option go_package="/proto/package/binance_service";
+
+message KlineData {
+    int64 openTime = 1;
+    double open = 2;
+    double high = 3;
+    double low = 4;
+    double close = 5;
+    double volume = 6;
+    int64 closeTime = 7;
+}
+
+message GetKlinesBySymbolRequest {
+    int64 endTime = 1;
+    int32 limit = 2;
+    string symbol = 3;
+    string interval = 4;
+}
+
+message GetKlinesBySymbolResponse {
+    repeated KlineData data = 1;
+}
+
+service BinanceService {
+    rpc GetKlinesBySymbol(GetKlinesBySymbolRequest) returns (GetKlinesBySymbolResponse) {}
+}

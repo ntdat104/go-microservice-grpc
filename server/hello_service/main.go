@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/go-microservice-grpc/proto/hello_service"
+	"github.com/go-microservice-grpc/proto/package/hello_service"
 	"google.golang.org/grpc"
 )
 

@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package go_microservice_grpc;
 
-option go_package="proto/core_service";
+option go_package="proto/package/core_service";
 
 message UserRequest {
     string name = 1;
