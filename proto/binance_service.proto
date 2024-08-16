@@ -5,13 +5,13 @@ package go_microservice_grpc;
 option go_package="/proto/package/binance_service";
 
 message KlineData {
-    int64 openTime = 1;
-    double open = 2;
-    double high = 3;
-    double low = 4;
-    double close = 5;
-    double volume = 6;
-    int64 closeTime = 7;
+    optional int64 openTime = 1;
+    optional double open = 2;
+    optional double high = 3;
+    optional double low = 4;
+    optional double close = 5;
+    optional double volume = 6;
+    optional int64 closeTime = 7;
 }
 
 message GetKlinesBySymbolRequest {

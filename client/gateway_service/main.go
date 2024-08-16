@@ -21,14 +21,16 @@ func main() {
 		Symbol:   "BTCUSDT",
 		EndTime:  time.Now().UnixMilli(),
 		Limit:    1000,
-		Interval: "15m",
+		Interval: "1d",
 	})
 	if err != nil {
 		log.Fatalf("GetKlinesBySymbol has err: %v", err)
 	}
 
 	for _, v := range response.Data {
-		log.Println(v)
+		volume := 1.4
+		v.Volume = &volume;
+		log.Println(*v.Volume)
 	}
 
 	// conn, err := grpc.Dial("localhost:50051", grpc.WithInsecure())

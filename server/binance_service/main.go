@@ -71,14 +71,18 @@ func (s *server) GetKlinesBySymbol(ctx context.Context, req *binance_service.Get
 		if err != nil {
 			log.Fatalf("Error converting Volume: %v", err)
 		}
+
+		openTime := int64(k[0].(float64))
+		closeTime := int64(k[6].(float64))
+
 		kline := &binance_service.KlineData{
-			OpenTime:  int64(k[0].(float64)),
-			Open:      open,
-			High:      high,
-			Low:       low,
-			Close:     closePrice,
-			Volume:    volume,
-			CloseTime: int64(k[6].(float64)),
+			OpenTime:  &openTime,
+			Open:      &open,
+			High:      &high,
+			Low:       &low,
+			Close:     &closePrice,
+			Volume:    &volume,
+			CloseTime: &closeTime,
 		}
 		parsedKlines = append(parsedKlines, kline)
 	}
