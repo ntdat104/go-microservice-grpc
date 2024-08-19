@@ -74,7 +74,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
-	log.Println("Server is running on port 50051")
+	log.Println("Server is running on port: 50051")
 	s := grpc.NewServer()
 	pb.RegisterHelloServiceServer(s, &server{})
 	if err := s.Serve(lis); err != nil {

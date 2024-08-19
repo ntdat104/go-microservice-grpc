@@ -19,8 +19,6 @@ type server struct {
 }
 
 func (s *server) GetKlinesBySymbol(ctx context.Context, req *pb.GetKlinesBySymbolRequest) (*pb.GetKlinesBySymbolResponse, error) {
-	log.Println("GetKlinesBySymbol:", req)
-
 	url := fmt.Sprintf("https://www.binance.com/api/v3/uiKlines?endTime=%d&limit=%d&symbol=%s&interval=%s", req.EndTime, req.Limit, req.Symbol, req.Interval)
 
 	// Make the HTTP request
@@ -47,31 +45,11 @@ func (s *server) GetKlinesBySymbol(ctx context.Context, req *pb.GetKlinesBySymbo
 
 	var parsedKlines []*pb.KlineData
 	for _, k := range klines {
-		open, err := strconv.ParseFloat(k[1].(string), 64)
-		if err != nil {
-			log.Fatalf("Error converting Open: %v", err)
-		}
-
-		high, err := strconv.ParseFloat(k[2].(string), 64)
-		if err != nil {
-			log.Fatalf("Error converting High: %v", err)
-		}
-
-		low, err := strconv.ParseFloat(k[3].(string), 64)
-		if err != nil {
-			log.Fatalf("Error converting Low: %v", err)
-		}
-
-		closePrice, err := strconv.ParseFloat(k[4].(string), 64)
-		if err != nil {
-			log.Fatalf("Error converting Close: %v", err)
-		}
-
-		volume, err := strconv.ParseFloat(k[5].(string), 64)
-		if err != nil {
-			log.Fatalf("Error converting Volume: %v", err)
-		}
-
+		open, _ := strconv.ParseFloat(k[1].(string), 64)
+		high, _ := strconv.ParseFloat(k[2].(string), 64)
+		low, _ := strconv.ParseFloat(k[3].(string), 64)
+		closePrice, _ := strconv.ParseFloat(k[4].(string), 64)
+		volume, _ := strconv.ParseFloat(k[5].(string), 64)
 		openTime := int64(k[0].(float64))
 		closeTime := int64(k[6].(float64))
 
@@ -95,7 +73,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
-	log.Println("Binance server is running on port 50052")
+	log.Println("Server is running on port: 50052")
 	s := grpc.NewServer()
 	pb.RegisterBinanceServiceServer(s, &server{})
 	if err := s.Serve(lis); err != nil {
