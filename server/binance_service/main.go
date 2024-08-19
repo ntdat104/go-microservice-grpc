@@ -10,15 +10,15 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/go-microservice-grpc/proto/package/binance_service"
+	pb "github.com/go-microservice-grpc/proto/package/binance_service"
 	"google.golang.org/grpc"
 )
 
 type server struct {
-	binance_service.BinanceServiceServer
+	pb.UnimplementedBinanceServiceServer
 }
 
-func (s *server) GetKlinesBySymbol(ctx context.Context, req *binance_service.GetKlinesBySymbolRequest) (*binance_service.GetKlinesBySymbolResponse, error) {
+func (s *server) GetKlinesBySymbol(ctx context.Context, req *pb.GetKlinesBySymbolRequest) (*pb.GetKlinesBySymbolResponse, error) {
 	log.Println("GetKlinesBySymbol:", req)
 
 	url := fmt.Sprintf("https://www.binance.com/api/v3/uiKlines?endTime=%d&limit=%d&symbol=%s&interval=%s", req.EndTime, req.Limit, req.Symbol, req.Interval)
@@ -45,7 +45,7 @@ func (s *server) GetKlinesBySymbol(ctx context.Context, req *binance_service.Get
 		return nil, err
 	}
 
-	var parsedKlines []*binance_service.KlineData
+	var parsedKlines []*pb.KlineData
 	for _, k := range klines {
 		open, err := strconv.ParseFloat(k[1].(string), 64)
 		if err != nil {
@@ -75,7 +75,7 @@ func (s *server) GetKlinesBySymbol(ctx context.Context, req *binance_service.Get
 		openTime := int64(k[0].(float64))
 		closeTime := int64(k[6].(float64))
 
-		kline := &binance_service.KlineData{
+		kline := &pb.KlineData{
 			OpenTime:  &openTime,
 			Open:      &open,
 			High:      &high,
@@ -87,7 +87,7 @@ func (s *server) GetKlinesBySymbol(ctx context.Context, req *binance_service.Get
 		parsedKlines = append(parsedKlines, kline)
 	}
 
-	return &binance_service.GetKlinesBySymbolResponse{Data: parsedKlines}, nil
+	return &pb.GetKlinesBySymbolResponse{Data: parsedKlines}, nil
 }
 
 func main() {
@@ -97,7 +97,7 @@ func main() {
 	}
 	log.Println("Binance server is running on port 50052")
 	s := grpc.NewServer()
-	binance_service.RegisterBinanceServiceServer(s, &server{})
+	pb.RegisterBinanceServiceServer(s, &server{})
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}

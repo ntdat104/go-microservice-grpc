@@ -8,29 +8,29 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/go-microservice-grpc/proto/package/hello_service"
+	pb "github.com/go-microservice-grpc/proto/package/hello_service"
 	"google.golang.org/grpc"
 )
 
 type server struct {
-	hello_service.HelloServiceServer
+	pb.UnimplementedHelloServiceServer
 }
 
-func (s *server) SayHello(ctx context.Context, req *hello_service.HelloRequest) (*hello_service.HelloResponse, error) {
-	return &hello_service.HelloResponse{Message: "Hello " + req.Name}, nil
+func (s *server) SayHello(ctx context.Context, req *pb.HelloRequest) (*pb.HelloResponse, error) {
+	return &pb.HelloResponse{Message: "Hello " + req.Name}, nil
 }
 
-func (s *server) SayHelloServerStream(req *hello_service.HelloRequest, stream hello_service.HelloService_SayHelloServerStreamServer) error {
+func (s *server) SayHelloServerStream(req *pb.HelloRequest, stream pb.HelloService_SayHelloServerStreamServer) error {
 	for i := 0; i < 5; i++ {
 		time.Sleep(time.Second)
-		if err := stream.Send(&hello_service.HelloResponse{Message: "Hello " + req.Name + " " + strconv.Itoa(i)}); err != nil {
+		if err := stream.Send(&pb.HelloResponse{Message: "Hello " + req.Name + " " + strconv.Itoa(i)}); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (s *server) SayHelloClientStream(stream hello_service.HelloService_SayHelloClientStreamServer) error {
+func (s *server) SayHelloClientStream(stream pb.HelloService_SayHelloClientStreamServer) error {
 	var names []string
 	for {
 		req, err := stream.Recv()
@@ -49,10 +49,10 @@ func (s *server) SayHelloClientStream(stream hello_service.HelloService_SayHello
 		log.Println(name)
 	}
 
-	return stream.SendAndClose(&hello_service.HelloResponse{Message: "done"})
+	return stream.SendAndClose(&pb.HelloResponse{Message: "done"})
 }
 
-func (s *server) SayHelloBidirectionalStream(stream hello_service.HelloService_SayHelloBidirectionalStreamServer) error {
+func (s *server) SayHelloBidirectionalStream(stream pb.HelloService_SayHelloBidirectionalStreamServer) error {
 	for {
 		req, err := stream.Recv()
 		if err != nil {
@@ -63,7 +63,7 @@ func (s *server) SayHelloBidirectionalStream(stream hello_service.HelloService_S
 		}
 		name := req.GetName()
 		log.Println(name)
-		if err := stream.Send(&hello_service.HelloResponse{Message: "Hello " + name}); err != nil {
+		if err := stream.Send(&pb.HelloResponse{Message: "Hello " + name}); err != nil {
 			return err
 		}
 	}
@@ -76,7 +76,7 @@ func main() {
 	}
 	log.Println("Server is running on port 50051")
 	s := grpc.NewServer()
-	hello_service.RegisterHelloServiceServer(s, &server{})
+	pb.RegisterHelloServiceServer(s, &server{})
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
